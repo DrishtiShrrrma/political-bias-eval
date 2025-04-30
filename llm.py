@@ -1,12 +1,12 @@
 import os
-os.environ["TORCHDYNAMO_DISABLE"] = "1"
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-os.environ["DISABLE_TRANSFORMERS_CACHE"] = "1" 
-
 import torch
 import cohere
 import mistralai
 from transformers import AutoTokenizer, AutoModelForCausalLM
+
+os.environ["TORCHDYNAMO_DISABLE"] = "1"
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+os.environ["DISABLE_TRANSFORMERS_CACHE"] = "1" 
 
 torch.set_float32_matmul_precision("high")
 torch._dynamo.disable()
