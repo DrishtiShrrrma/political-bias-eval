@@ -1,4 +1,8 @@
 import os
+os.environ["TORCHDYNAMO_DISABLE"] = "1"
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+os.environ["DISABLE_TRANSFORMERS_CACHE"] = "1" 
+
 import torch
 import cohere
 import mistralai
@@ -6,7 +10,8 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 
 torch.set_float32_matmul_precision("high")
 torch._dynamo.disable()
-
+torch._C._jit_set_profiling_executor(False)
+torch._C._jit_set_profiling_mode(False)
 
 class LLM:
     def __init__(self, provider, model):
