@@ -4,6 +4,10 @@ import cohere
 import mistralai
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
+torch.set_float32_matmul_precision("high")
+torch._dynamo.disable()
+
+
 class LLM:
     def __init__(self, provider, model):
         self.model = model
@@ -17,7 +21,7 @@ class LLM:
             api_key = os.getenv("MISTRAL_API_KEY")
             self.client = mistralai.Mistral(api_key)
 
-        elif provider == "huggingface":
+        elif provider in ["google", "qwen"]:
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
             self.tokenizer = AutoTokenizer.from_pretrained(model)
             self.client = AutoModelForCausalLM.from_pretrained(
@@ -48,7 +52,7 @@ class LLM:
             )
             return response.choices[0].message.content
 
-        elif self.provider == "huggingface":
+        elif self.provider in ["google", "qwen"]:
             messages = [{"role": "user", "content": text}]
             chat_input = self.tokenizer.apply_chat_template(
                 messages, tokenize=False, add_generation_prompt=True
@@ -68,7 +72,7 @@ class LLM:
 
             output_text = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=False)[0]
 
-            # Gemma-specific output cleanup
+            # Gemma-specific cleanup
             if "gemma" in self.model.lower():
                 if "<start_of_turn>model" in output_text:
                     return output_text.split("<start_of_turn>model")[-1].split("<end_of_turn>")[0].strip()
