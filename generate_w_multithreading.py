@@ -19,30 +19,36 @@ class ParagraphGenerator:
         return data["prompts"]
 
     def generate_all(self, provider, model, max_tokens=1000):
-        """Multithreaded version of generate_all that safely wraps _generate_stance"""
+        """Multithreaded version of generate_all that tracks prompt-level progress"""
         os.makedirs(self.output_dir, exist_ok=True)
 
+        # Count all prompts for the progress bar
+        total = sum(
+            len(prompts)
+            for topic in self.prompts.values()
+            for lang in topic.values()
+            for prompts in lang.values()
+        )
+
         tasks = []
-        with ThreadPoolExecutor(max_workers=10) as executor:
-            for topic_name, topic_data in self.prompts.items():
-                for lang, lang_data in topic_data.items():
-                    for stance, prompts in lang_data.items():
-                        tasks.append(executor.submit(
-                            self._generate_stance_threadsafe,
-                            provider, model, topic_name, lang, stance, prompts, max_tokens
-                        ))
+        with tqdm(total=total, desc="Generating paragraphs") as pbar:
+            with ThreadPoolExecutor(max_workers=20) as executor:
+                for topic_name, topic_data in self.prompts.items():
+                    for lang, lang_data in topic_data.items():
+                        for stance, prompts in lang_data.items():
+                            tasks.append(executor.submit(
+                                self._generate_stance_threadsafe,
+                                provider, model, topic_name, lang, stance, prompts, max_tokens, pbar
+                            ))
 
-            for future in tqdm(as_completed(tasks), total=len(tasks), desc="Generating paragraphs"):
-                try:
-                    future.result()
-                except Exception as e:
-                    print("Error during generation:", e)
+                for future in as_completed(tasks):
+                    try:
+                        future.result()
+                    except Exception as e:
+                        print("Error during generation:", e)
 
-    def _generate_stance_threadsafe(self, provider, model, topic, language, stance, prompts, max_tokens):
-        """Wraps the original _generate_stance with a dummy progress bar (thread-safe)"""
-        class DummyPbar:
-            def update(self, n): pass
-
+    def _generate_stance_threadsafe(self, provider, model, topic, language, stance, prompts, max_tokens, pbar):
+        """Wraps _generate_stance for use in threaded execution"""
         self._generate_stance(
             provider=provider,
             model=model,
@@ -51,8 +57,9 @@ class ParagraphGenerator:
             stance=stance,
             prompts=prompts,
             max_tokens=max_tokens,
-            pbar=DummyPbar()
+            pbar=pbar
         )
+
 
     def _generate_stance(self, provider, model, topic, language, stance, prompts, max_tokens, pbar):
         for i, prompt in enumerate(prompts):
