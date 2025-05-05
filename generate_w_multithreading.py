@@ -62,27 +62,33 @@ class ParagraphGenerator:
 
 
     def _generate_stance(self, provider, model, topic, language, stance, prompts, max_tokens, pbar):
+        model_clean = model.split("/")[-1]
+
         for i, prompt in enumerate(prompts):
             path = os.path.join(
                 self.output_dir,
                 language,
                 topic,
                 provider,
-                model,
+                model_clean,
                 stance,
                 f"sample_{i+1}.txt"
             )
             os.makedirs(os.path.dirname(path), exist_ok=True)
 
+            # Call the LLM
             response = self.llm.query(
                 text=prompt,
                 max_tokens=max_tokens
             )
 
+            # Save output
             with open(path, "w", encoding="utf-8") as f:
                 f.write(response)
 
+            # Update progress bar
             pbar.update(1)
+
 
 if __name__ == "__main__":
     parser = ArgumentParser(description="Generate paragraphs from prompts")
