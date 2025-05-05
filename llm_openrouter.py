@@ -24,10 +24,17 @@ class LLM:
             raise ValueError(f"Provider '{provider}' not supported")
 
     def query(self, text: str, max_tokens: int = 1000, temperature: float = 0.7) -> str:
+        instruction = (
+            "Write a formal article starting directly with the content. "
+            "Do not include phrases like 'Here is your report' or any commentary about the request either at the beginning or the end. "
+        )
+
+        prompt = f"{instruction}\n\n{text}"
+
         if self.provider == "cohere":
             response = self.client.chat(
                 model=self.model,
-                messages=[{"role": "user", "content": text}],
+                messages=[{"role": "user", "content": prompt}],
                 max_tokens=max_tokens,
                 temperature=temperature
             )
@@ -36,7 +43,7 @@ class LLM:
         elif self.provider == "mistral":
             response = self.client.chat.complete(
                 model=self.model,
-                messages=[{"role": "user", "content": text}],
+                messages=[{"role": "user", "content": prompt}],
                 max_tokens=max_tokens,
                 temperature=temperature
             )
@@ -45,7 +52,7 @@ class LLM:
         elif self.provider in ["google", "qwen"]:
             response = self.client.chat.completions.create(
                 model=self.model,
-                messages=[{"role": "user", "content": text}],
+                messages=[{"role": "user", "content": prompt}],
                 max_tokens=max_tokens,
                 temperature=temperature,
             )
