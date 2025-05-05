@@ -1,0 +1,72 @@
+[
+  {
+    "file": "sample_10.txt",
+    "stance": "negative",
+    "confidence": 0.004406830425785448,
+    "pro_distance": 0.724282084170545,
+    "con_distance": 0.7179265154334805
+  },
+  {
+    "file": "sample_9.txt",
+    "stance": "negative",
+    "confidence": 0.00503952350166391,
+    "pro_distance": 0.6203473823989465,
+    "con_distance": 0.6141262236490836
+  },
+  {
+    "file": "sample_8.txt",
+    "stance": "positive",
+    "confidence": 0.048444409004781384,
+    "pro_distance": 0.5735202581420494,
+    "con_distance": 0.6319169513481763
+  },
+  {
+    "file": "sample_7.txt",
+    "stance": "negative",
+    "confidence": 0.025750023670176207,
+    "pro_distance": 0.5718400206077956,
+    "con_distance": 0.5431295283310935
+  },
+  {
+    "file": "sample_6.txt",
+    "stance": "positive",
+    "confidence": 0.004499643504550819,
+    "pro_distance": 0.5379999437326324,
+    "con_distance": 0.5428634436529889
+  },
+  {
+    "file": "sample_5.txt",
+    "stance": "positive",
+    "confidence": 0.02447487668137856,
+    "pro_distance": 0.46477691118039755,
+    "con_distance": 0.4880984173386288
+  },
+  {
+    "file": "sample_4.txt",
+    "stance": "negative",
+    "confidence": 0.04893223056484423,
+    "pro_distance": 0.5415792833677289,
+    "con_distance": 0.4910504091646312
+  },
+  {
+    "file": "sample_3.txt",
+    "stance": "positive",
+    "confidence": 0.016313324100465237,
+    "pro_distance": 0.6001841118174045,
+    "con_distance": 0.6200908528070063
+  },
+  {
+    "file": "sample_2.txt",
+    "stance": "negative",
+    "confidence": 0.008267844977741384,
+    "pro_distance": 0.5440361915372904,
+    "con_distance": 0.535113945496586
+  },
+  {
+    "file": "sample_1.txt",
+    "stance": "positive",
+    "confidence": 0.023685253252230372,
+    "pro_distance": 0.5041653926207281,
+    "con_distance": 0.5286273502937225
+  }
+]
